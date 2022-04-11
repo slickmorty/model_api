@@ -3,7 +3,7 @@ import pandas as pd
 import ta
 
 
-def add_indicators(df: pd.core.frame.DataFrame):
+def add_indicators(df: pd.core.frame.DataFrame) -> pd.core.frame.DataFrame:
     """Adding indicators to the dataframe
 
     Args:
@@ -24,7 +24,8 @@ def add_indicators(df: pd.core.frame.DataFrame):
     df["RSI"] = rsi.rsi()
 
     # CCI
-    cci = ta.trend.CCIIndicator(high=df["High"], low=df["Low"], close=df["Close"])
+    cci = ta.trend.CCIIndicator(
+        high=df["High"], low=df["Low"], close=df["Close"])
     df["CCI"] = cci.cci()
 
     # STOCHASTIC
@@ -51,7 +52,8 @@ def add_indicators(df: pd.core.frame.DataFrame):
     df["DON_CHIAN_pband"] = dcc.donchian_channel_pband()
 
     # ADX
-    adx = ta.trend.ADXIndicator(high=df["High"], low=df["Low"], close=df["Close"])
+    adx = ta.trend.ADXIndicator(
+        high=df["High"], low=df["Low"], close=df["Close"])
     df["ADX_Pos"] = adx.adx_pos()
     df["ADX_Neg"] = adx.adx_neg()
 
@@ -62,7 +64,7 @@ def add_indicators(df: pd.core.frame.DataFrame):
     return df
 
 
-def add_candles(df: pd.core.frame.DataFrame):
+def add_candles(df: pd.core.frame.DataFrame) -> pd.core.frame.DataFrame:
     """Making and adding candles to the dataframe
 
     Args:
