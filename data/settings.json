@@ -1,5 +1,6 @@
 {
     "data":{
-        "symbol":"SP500m"
+        "symbol":"SP500m",
+        "how_many_candles_before":256
     }
 }
