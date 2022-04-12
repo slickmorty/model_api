@@ -74,13 +74,11 @@ def add_candles(df: pd.core.frame.DataFrame) -> pd.core.frame.DataFrame:
         df (pd.core.frame.DataFrame): dataframe
     """
 
-    df["Candel_Body"] = df["Close"] - df["Open"]
-
     # Calculating candel upper and lower shadow
     candel_upper_shadow = []
     candel_lower_shadow = []
 
-    for i in range(len(df["Candel_Body"])):
+    for i in range(len(df["Close"])):
 
         if df["Close"][i] > df["Open"][i]:
             candel_upper_shadow.append((df["High"][i] - df["Close"][i]))
@@ -93,6 +91,7 @@ def add_candles(df: pd.core.frame.DataFrame) -> pd.core.frame.DataFrame:
             candel_lower_shadow.append((df["Close"][i] - df["Low"][i]))
 
     df["Candel_Upper_Shadow"] = candel_upper_shadow
+    df["Candel_Body"] = df["Close"] - df["Open"]
     df["Candel_Lower_Shadow"] = candel_lower_shadow
 
     return df
