@@ -1,6 +1,17 @@
 {
     "data":{
         "symbol":"SP500m",
-        "how_many_candles_before":256
+        "how_many_candles_before":500,
+        "time_difference_in_seconds":10800,
+        "column_names":[
+            "DateTime",
+            "Open",
+            "High",
+            "Low",
+            "Close",
+            "tick_volume",
+            "spread",
+            "Volume"
+        ]
     }
 }
