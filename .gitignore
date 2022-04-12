@@ -4,6 +4,7 @@ __pycache__/
 *$py.class
 test.*
 *.h5
+*.csv
 
 # C extensions
 *.so
@@ -27,7 +28,7 @@ share/python-wheels/
 .installed.cfg
 *.egg
 MANIFEST
-*.csv
+
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
