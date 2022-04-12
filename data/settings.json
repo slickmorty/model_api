@@ -13,6 +13,7 @@
             "tick_volume",
             "spread",
             "Volume"
-        ]
+        ],
+        "csv_path":"./data/csv/data.csv"
     }
 }

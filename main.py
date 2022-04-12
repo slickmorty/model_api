@@ -20,7 +20,7 @@ def get_data_convet_to_pandas(data_until_now: List, data_befor_model_date: List)
         data_settings.candles_with_nan)], axis=0)
     df = df.reset_index()
     df.pop("index")
-    df.to_csv("test.csv")
+    df.to_csv(data_settings.csv_path)
 
     return df
 
