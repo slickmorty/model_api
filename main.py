@@ -16,7 +16,8 @@ def get_data_convet_to_pandas(data_until_now: List, data_befor_model_date: List)
     df = pd.DataFrame(total, columns=data_settings.column_names)
     df = indicators.add_indicators(df)
     df = indicators.add_candles(df)
-    df = df.drop(labels=[i for i in range(34)], axis=0)
+    df = df.drop(labels=[i for i in range(
+        data_settings.candles_with_nan)], axis=0)
     df = df.reset_index()
     df.pop("index")
     df.to_csv("test.csv")
@@ -25,26 +26,9 @@ def get_data_convet_to_pandas(data_until_now: List, data_befor_model_date: List)
 
 
 def main():
-    # a, b = get_data.get_initial_data()
 
-    # c = b+a
-    # d = []
-    # for i in c:
-
-    #     asd = i[0]
-    #     asd = datetime.fromtimestamp(asd)
-    #     asd = get_data.convert_from_metatrader_timezone(asd)
-    #     d.append((asd, i[1], i[2], i[3], i[4], i[5], i[6], i[7]))
-
-    # df = pd.DataFrame(d, columns=data_settings.column_names)
-    # df = indicators.add_indicators(df)
-    # df = indicators.add_candles(df)
-    # df = df.drop(labels=[i for i in range(34)], axis=0)
-    # df = df.reset_index()
-    # df.pop("index")
-    # df.to_csv("test.csv")
-    data_until_now, date_befor_model_date = get_data.get_initial_data()
-    df = get_data_convet_to_pandas(data_until_now, date_befor_model_date)
+    data_until_now, data_before_model_date = get_data.get_initial_data()
+    df = get_data_convet_to_pandas(data_until_now, data_before_model_date)
     # breakpoint()
 
 
