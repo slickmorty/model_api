@@ -42,6 +42,13 @@ def convert_to_metatrader_timezone(date: datetime) -> datetime:
     return date
 
 
+def convert_from_metatrader_timezone(date: datetime) -> datetime:
+
+    date = datetime.fromtimestamp(
+        int(date.timestamp()) - data_settings.time_difference_in_seconds)
+    return date
+
+
 if __name__ == "__main__":
     pass
 
