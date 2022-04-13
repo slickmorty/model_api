@@ -35,6 +35,7 @@
             "Candle_Upper_Shadow",
             "Candle_Body",
             "Candle_Lower_Shadow"
-        ]
+        ],
+        "window_size":256
     }
 }
