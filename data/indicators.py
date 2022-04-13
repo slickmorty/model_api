@@ -90,8 +90,8 @@ def add_candles(df: pd.core.frame.DataFrame) -> pd.core.frame.DataFrame:
         else:
             candel_lower_shadow.append((df["Close"][i] - df["Low"][i]))
 
-    df["Candel_Upper_Shadow"] = candel_upper_shadow
-    df["Candel_Body"] = df["Close"] - df["Open"]
-    df["Candel_Lower_Shadow"] = candel_lower_shadow
+    df["Candle_Upper_Shadow"] = candel_upper_shadow
+    df["Candle_Body"] = df["Close"] - df["Open"]
+    df["Candle_Lower_Shadow"] = candel_lower_shadow
 
     return df
