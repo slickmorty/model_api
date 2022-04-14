@@ -8,11 +8,11 @@ import model.settings as model_settings
 import pandas as pd
 
 
-def get_initial_data(model_date: str = model_settings.model_name, symbol: str = data_settings.symbol) -> tuple[list, list]:
+def get_initial_data(model_date: str = model_settings.model_date, symbol: str = data_settings.symbol) -> tuple[list, list]:
     """Getting initial data
 
     Args:
-        model_date (str, optional): The date model was previously trained on. Defaults to model_settings.model_name.
+        model_date (str, optional): The date model was previously trained on. Defaults to model_settings.model_date.
         symbol (str, optional): symbol e.g. SP500m. Defaults to data_settings.symbol.
 
     Returns:
