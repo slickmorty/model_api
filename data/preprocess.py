@@ -1,40 +1,32 @@
-from tkinter import N
 import pandas as pd
-from data import settings
-import settings as data_settings
+import data.settings as data_settings
 import numpy as np
-import tensorflow as tf
+from tensorflow import one_hot
 
 
 class DataProcessing():
 
-    def __init__(self, data: pd.core.frame.DataFrame,
-                 output: pd.core.series.Series,
-                 input_width: int = settings.window_size,
-                 stockname: str = data_settings.symbol,
-                 min_max: bool = False, minimum: float = -1.0, maximum: float = 1.0):
-        """init method of DataProcessing class
+    def __init__(
+            self, data: pd.core.frame.DataFrame,
+            input_width: int = data_settings.window_size,
+            stockname: str = data_settings.symbol,
+            minimum: float = -1.0, maximum: float = 1.0):
 
-        Args:
-            data (pd.core.frame.DataFrame): all of our data
-            output (pd.core.series.Series): all of our outputs
-            input_width (int): window size
-            stockname (str): stock name 
-            min_max (bool, optional):  whether we want min_max scaling. Defaults to False.
-            minimum (float, optional): mininum of scaled data. Defaults to -1.0.
-            maximum (float, optional): maximum of scaled data. Defaults to 1.0.
-        """
+        data.pop("DateTime")
+        self.data = pd.DataFrame()
+        for column in data_settings.indicators+data_settings.candle_params:
+            self.data[f"{column}"] = data[f"{column}"]
+
+        self.output = data.pop("Class_Number")
         self.stockname: str = stockname
         self.input_width: int = input_width
-        self.data: pd.core.frame.DataFrame = data
-        self.output: pd.core.series.Series = output
         self.data_mean = self.data.mean()
         self.data_std = self.data.std()
 
-        if(min_max):
-            scaled_data, _, _ = self.normalize(
-                self.data, data_std=self.data_std, data_mean=self.data_mean)  # TODO ? idk what the fuck to do with data mean and datastd
-            self.scaled_data = self.min_max_scaler(scaled_data, -1., 1.)
+        self.scaled_data, _, _ = self.normalize(
+            self.data, data_std=self.data_std, data_mean=self.data_mean)  # TODO ? idk what the fuck to do with data mean and datastd probably doesnt even matter
+        # I know its wrong fuck off
+        self.scaled_data = self.min_max_scaler(self.scaled_data, -1., 1.)
 
     def make_windows(self, input_data: pd.core.frame.DataFrame, output_data: pd.core.series.Series = None, convert_to_numpy: bool = True):
 
@@ -75,7 +67,7 @@ class DataProcessing():
                 window_input = np.asarray(window_input)
                 window_output = np.asarray(window_output)
 
-                window_output = tf.one_hot(window_output, depth=2)
+                window_output = one_hot(window_output, depth=2)
 
             return window_input, window_output
 
@@ -97,3 +89,10 @@ class DataProcessing():
         data_std = (data-data_min)/(data_max-data_min)
         data_scaled = data_std*(abs(minimum)+maximum)+minimum
         return data_scaled
+
+    @property
+    def windows(self):
+        return self.make_windows(
+            input_data=self.scaled_data,
+            output_data=self.output,
+            convert_to_numpy=True)
