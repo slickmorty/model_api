@@ -1,23 +1,40 @@
 from tensorflow import keras
-from tensorflow import metrics
+from keras.models import load_model
+import numpy as np
+import pandas as pd
+
 from data import DataProcessing
+from data import settings as data_settings
+from model import settings as model_settings
 
 
-def compile_and_fit(model, input_window, output_window):
+def compile_and_fit(model: keras.Model, input_window: np.ndarray, output_window: np.ndarray) -> None:
 
-    MAX_EPOCHS = 3
-
-    # model.compile(loss='binary_crossentropy',
-    #                 optimizer='adam',
-    #                 metrics=[metrics.BinaryAccuracy()])
-
-    history = model.fit(
+    model.fit(
         x=input_window,
         y=output_window,
-        batch_size=24,
+        batch_size=model_settings.batch_size,
         shuffle=True,
-        epochs=MAX_EPOCHS,
-        verbose=2,
+        epochs=model_settings.epoches,
     )
+    return
 
-    return history
+
+def update_model_with_initial_info(df: pd.DataFrame) -> tuple[keras.Model, DataProcessing]:
+
+    data = DataProcessing(
+        data=df[:-data_settings.future_window_size],
+        input_width=data_settings.window_size,
+        stockname=data_settings.symbol,
+        minimum=data_settings.min_value,
+        maximum=data_settings.max_value
+    )
+    model = load_model(model_settings.model_path)
+    input_window, output_window = data.windows
+    compile_and_fit(model, input_window, output_window)
+    model.save(model_settings.model_path)
+    model_settings.model_date = str(
+        df.iloc[-data_settings.future_window_size]["DateTime"])
+    model_settings.save()
+
+    return model, data
