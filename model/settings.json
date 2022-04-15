@@ -1,10 +1,10 @@
 {
-    "model":{
         "date"              :   "22-04-13 22:25:00",
+        "base_model_date"   :   "22-04-13 22:25:00",
         "model_path"        :   "./model/model.h5",
         "base_model_path"   :  "./model/base/model.h5",
-        "epoches"           :   2,
+        "epoches"           :   3,
         "loss"              :   "binary_crossentropy",
-        "optimizer"         :   "adam"
-    }
+        "optimizer"         :   "adam",
+        "batch_size":24
 }
