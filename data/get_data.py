@@ -1,10 +1,8 @@
 from datetime import datetime
-from symtable import Symbol
-import numpy as np
 import MetaTrader5 as mt5
-from pytz import timezone
 import data.settings as data_settings
 import model.settings as model_settings
+from data import indicators
 import pandas as pd
 
 
@@ -81,6 +79,30 @@ def convert_from_metatrader_timezone(date: datetime) -> datetime:
     date = datetime.fromtimestamp(
         int(date.timestamp()) - data_settings.time_difference_in_seconds)
     return date
+
+
+def get_initial_data_and_convert_to_pandas(data_until_now: list, data_befor_model_date: list) -> pd.DataFrame:
+
+    total = []
+    for value in data_befor_model_date+data_until_now:
+        total.append((convert_from_metatrader_timezone(datetime.fromtimestamp(
+            value[0])), value[1], value[2], value[3], value[4], value[5], value[6], value[7]))
+
+    df = pd.DataFrame(total, columns=data_settings.column_names)
+
+    # TODO: saving raw data remove if not needed
+    df.to_csv(data_settings.raw_data_csv_path, index=False)
+
+    df = indicators.add_indicators(df)
+    df = indicators.add_candles(df)
+    df = indicators.add_class(df)
+    df = df.drop(labels=[i for i in range(
+        data_settings.candles_with_nan)], axis=0)
+    df = df.reset_index()
+    df.pop("index")
+    df.to_csv(data_settings.indicator_data_csv_path, index=False)
+
+    return df
 
 
 if __name__ == "__main__":
