@@ -16,6 +16,8 @@ indicators: list[str] = data.get("indicators")
 candle_params: list[str] = data.get("candle_params")
 window_size: int = data.get("window_size")
 future_window_size: int = data.get("future_window_size")
+max_value: float = data.get("max_value")
+min_value: float = data.get("min_value")
 
 
 def save(param, param_name: str, data: dict = data):
