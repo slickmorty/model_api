@@ -5,6 +5,7 @@ __pycache__/
 test.*
 *.h5
 *.csv
+logs
 
 # C extensions
 *.so
