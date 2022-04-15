@@ -31,6 +31,7 @@ class DataProcessing():
     def make_windows(self, input_data: pd.core.frame.DataFrame, output_data: pd.core.series.Series = None, convert_to_numpy: bool = True):
 
         window_input = []
+
         if output_data is None:
             for i in range(self.input_width, len(input_data)):
 
@@ -50,7 +51,6 @@ class DataProcessing():
             return window_input
 
         else:
-
             window_output = []
             for i in range(self.input_width, len(input_data)):
 
@@ -96,3 +96,4 @@ class DataProcessing():
             input_data=self.scaled_data,
             output_data=self.output,
             convert_to_numpy=True)
+    
