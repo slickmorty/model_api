@@ -6,7 +6,7 @@ from data import indicators
 import pandas as pd
 
 
-def get_initial_data(model_date: str = model_settings.model_date, symbol: str = data_settings.symbol) -> tuple[list, list]:
+def get_initial_data(model_date: datetime = model_settings.model_date, symbol: str = data_settings.symbol) -> tuple[list, list]:
     """Getting initial data
 
     Args:
@@ -17,7 +17,7 @@ def get_initial_data(model_date: str = model_settings.model_date, symbol: str = 
         tuple[list, list]: A tuple containing list of data untill now and some data before model's date
     """
     # Make model date's time compatible with metatradertimesone
-    model_date = datetime.strptime(model_date, "%y-%m-%d %H:%M:%S")
+    # model_date = datetime.strptime(model_date, "%y-%m-%d %H:%M:%S")
     model_date = convert_to_metatrader_timezone(model_date)
 
     if not mt5.initialize():
@@ -44,6 +44,9 @@ def get_live_data(symbol: str = data_settings.symbol) -> list[tuple]:
     Returns:
         list[tuple]: A list containing a tuple containing data.
     """
+    if not mt5.initialize():
+        print("initialize() failed")
+        mt5.shutdown()
     live_data = mt5.copy_rates_from_pos(symbol, mt5.TIMEFRAME_M5, 0, 1)
 
     return live_data.tolist()
@@ -58,14 +61,13 @@ def get_prev_candle(symbol: str = data_settings.symbol) -> tuple:
     Returns:
         list[tuple]: A tuple containing data.
     """
+    if not mt5.initialize():
+        print("initialize() failed")
+        mt5.shutdown()
     prev_candle = mt5.copy_rates_from(
         symbol, mt5.TIMEFRAME_M5, convert_to_metatrader_timezone(datetime.now()), 2)
 
     return prev_candle.tolist()[:][0]
-
-
-def load_data_from_csv():
-    return
 
 
 def convert_to_metatrader_timezone(date: datetime) -> datetime:
@@ -81,7 +83,7 @@ def convert_from_metatrader_timezone(date: datetime) -> datetime:
     return date
 
 
-def get_initial_data_and_convert_to_pandas(data_until_now: list, data_befor_model_date: list) -> pd.DataFrame:
+def convert_initial_data_to_pandas(data_until_now: list, data_befor_model_date: list) -> pd.DataFrame:
 
     total = []
     for value in data_befor_model_date+data_until_now:
