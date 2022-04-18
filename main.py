@@ -24,50 +24,65 @@ def main():
     df, raw_df = get_data.convert_initial_data_to_pandas(
         data_until_now, data_before_model_date)
 
-    # if(len(data_until_now) >= 48):
+    if(len(data_until_now) >= 48):
 
-    #     mylogs.critical(logs.UPDATE_MODEL_INITIALLY)
-    #     model, data = model_update.update_model_with_initial_info(df)
-    #     mylogs.info(logs.FINISHED_UPDATING)
+        mylogs.critical(logs.UPDATE_MODEL_INITIALLY)
+        model, data = model_update.update_model_with_initial_info(df)
+        mylogs.info(logs.FINISHED_UPDATING)
 
-    # else:
-    #     model = load_model(model_settings.model_path)
+    else:
+        mylogs.info(logs.LOADING)
+        model = load_model(model_settings.model_path)
 
-    # prediction = predict.predict(model, df,True)
+    mylogs.info(logs.PREDICTING)
+    prediction = predict.predict(model, df, True)
 
     while(True):
 
+        mylogs.info(logs.GETTING_NEW_DATA)
+        # GET NEW CANDLE
         prev_candle = list(get_data.get_prev_candle())
+
+        # convert to metatrader time and also to datetime object
         prev_candle[0] = get_data.convert_from_metatrader_timezone(
             datetime.fromtimestamp(prev_candle[0]))
 
-        print(raw_df.tail(10))
-
+        # Check if the candle is new
         if(raw_df.iloc[-1].DateTime != prev_candle[0]):
+
+            mylogs.warning(logs.NEW_CANDLE_DETECTED)
             df_copy = raw_df.copy()
+
             # SAVE LIST IN DATAFRAME
             df_copy.loc[len(df_copy)] = prev_candle
 
-            df_copy = indicators.add_indicators(df)
-            df_copy = indicators.add_candles(df)
-            df_copy = indicators.add_class(df)
-            df_copy = df.iloc[]
+            # Save new data in raw_df
+            mylogs.warning(logs.SAVING_CAREFULL)
+            raw_df.loc[len(raw_df)] = prev_candle
+            raw_df.to_csv(data_settings.raw_data_csv_path, index=False)
+
+            # Adding indicators
+            df_copy = indicators.add_indicators(df_copy)
+            df_copy = indicators.add_candles(df_copy)
+            df_copy = indicators.add_class(df_copy)
+
+            # Make it as small as possible
+            df_copy = df_copy[-256:].reset_index(drop=True)
+
+            # Predict
             predict.predict(model, df_copy)
 
-        # prev_candle = pd.Series(
-        #     prev_candle, index=data_settings.column_names)
-        # print(prev_candle)
-        # # print(raw_raw_df.tail())
-        # # print(prev_candle)
+            # َADD to data frame and save
+            mylogs.warning(logs.SAVING_CAREFULL)
+            df.loc[len(df)] = df_copy.iloc[-1]
+            df.to_csv(data_settings.indicator_data_csv_path, index=False)
 
-        # #     raw_df = pd.concat([raw_df, prev_candle])
-        # #     print(raw_df.tail())
-        # raw_df.add
-        # print(raw_df.iloc[-1].DateTime == prev_candle[0])
-        time.sleep(10)
-    # get prev candle
-    # check if its different
-    # if it is , add to df
+            # Check for model update here
+            mylogs.warn(logs.WAITING_FOR_NEXT_CANDLE)
+
+            time.sleep(270)
+
+        time.sleep(5)
 
 
 if __name__ == "__main__":

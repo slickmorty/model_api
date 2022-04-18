@@ -8,6 +8,12 @@ UPDATE_MODEL_INITIALLY = """
 \t********************              THIS COULD TAKE SOME TIME               ********************
 \t********************          DON'T TOUCH THE KEYBOARD PLZ <3             ********************"""
 FINISHED_UPDATING = "********Finished updating the model********"
+LOADING = "LOADING..........."
+PREDICTING = "Predicting"
+GETTING_NEW_DATA = "Getting new data"
+NEW_CANDLE_DETECTED = "New Candle Detected"
+SAVING_CAREFULL = "********* Saving Data on disk, BE CAREFULL ***********"
+WAITING_FOR_NEXT_CANDLE = "********* Waiting for next candle, At least 5 mins ***********"
 
 
 def make_logs(logs):
