@@ -100,7 +100,6 @@ def add_candles(df: pd.core.frame.DataFrame) -> pd.core.frame.DataFrame:
 
 def add_class(df: pd.DataFrame) -> pd.DataFrame:
 
-    buy_or_sell = []
     buy_or_sell_number = []
 
     def average(index: int, future_window_size: int):
@@ -114,18 +113,14 @@ def add_class(df: pd.DataFrame) -> pd.DataFrame:
     # number_of_sells= 0
     for i in range(len(df['Close'])-future_window_size):
         if(average(i, future_window_size) > df['Close'][i]):
-            buy_or_sell.append('Buy')
             buy_or_sell_number.append(1)
             # number_of_buys = number_of_buys+1
         else:
-            buy_or_sell.append('Sell')
             buy_or_sell_number.append(0)
             # number_of_sells = number_of_sells+1
 
     for i in range(future_window_size):
-        buy_or_sell.append(None)
         buy_or_sell_number.append(-1)
 
-    df['Class'] = buy_or_sell
-    df['Class_Number'] = buy_or_sell_number
+    df['Real'] = buy_or_sell_number
     return df
