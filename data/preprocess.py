@@ -17,7 +17,7 @@ class DataProcessing():
         for column in data_settings.indicators+data_settings.candle_params:
             self.data[f"{column}"] = data[f"{column}"]
 
-        self.output = data.pop("Class_Number")
+        self.output = data.pop("Real")
         self.stockname: str = stockname
         self.input_width: int = input_width
         self.data_mean = self.data.mean()
