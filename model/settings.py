@@ -4,7 +4,8 @@ from datetime import datetime
 with open("./model/settings.json", "r") as f:
     data: dict = json.load(f)
 
-model_date: datetime = datetime.strptime(data.get("date"), "%y-%m-%d %H:%M:%S")
+model_date: datetime = datetime.strptime(
+    data.get("model_date"), "%Y-%m-%d %H:%M:%S")
 base_model_date: str = data.get("base_model_date")
 model_path: str = data.get("model_path")
 base_model_path: str = data.get("base_model_path")
