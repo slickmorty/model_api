@@ -26,14 +26,14 @@ class DataProcessing():
         self.scaled_data, _, _ = self.normalize(
             self.data, data_std=self.data_std, data_mean=self.data_mean)  # TODO ? idk what the fuck to do with data mean and datastd probably doesnt even matter
         # I know its wrong fuck off
-        self.scaled_data = self.min_max_scaler(self.scaled_data, -1., 1.)
+        self.scaled_data = self.min_max_scaler(self.scaled_data, minimum, maximum)
 
     def make_windows(self, input_data: pd.core.frame.DataFrame, output_data: pd.core.series.Series = None, convert_to_numpy: bool = True):
 
         window_input = []
 
         if output_data is None:
-            for i in range(self.input_width, len(input_data)):
+            for i in range(self.input_width, len(input_data)+1):
 
                 window_input.append(
                     input_data[i-self.input_width:i].reset_index())
@@ -56,7 +56,7 @@ class DataProcessing():
 
                 window_input.append(
                     input_data[i-self.input_width:i].reset_index())
-                window_output.append(output_data[i])
+                window_output.append(output_data[i-1])
                 window_input[-1].pop("index")
                 # convert pd.DataFrame to numpy
                 window_input[-1] = window_input[-1].to_numpy()

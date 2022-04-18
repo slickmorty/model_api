@@ -32,9 +32,12 @@ def update_model_with_initial_info(df: pd.DataFrame) -> tuple[keras.Model, DataP
     model = load_model(model_settings.model_path)
     input_window, output_window = data.windows
     compile_and_fit(model, input_window, output_window)
+
     model.save(model_settings.model_path)
+
     model_settings.model_date = str(
         df.iloc[-data_settings.future_window_size]["DateTime"])
-    model_settings.save()
+    model_settings.save(param=model_settings.model_date,
+                        param_name="model_date")
 
     return model, data

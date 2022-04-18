@@ -7,6 +7,7 @@ UPDATE_MODEL_INITIALLY = """
 \t********************      UPDATING MODEL WITH DATA SINCE LAST TIME        ********************
 \t********************              THIS COULD TAKE SOME TIME               ********************
 \t********************          DON'T TOUCH THE KEYBOARD PLZ <3             ********************"""
+FINISHED_UPDATING = "********Finished updating the model********"
 
 
 def make_logs(logs):

@@ -83,7 +83,7 @@ def convert_from_metatrader_timezone(date: datetime) -> datetime:
     return date
 
 
-def convert_initial_data_to_pandas(data_until_now: list, data_befor_model_date: list) -> pd.DataFrame:
+def convert_initial_data_to_pandas(data_until_now: list, data_befor_model_date: list) -> tuple[pd.DataFrame, pd.DataFrame]:
 
     total = []
     for value in data_befor_model_date+data_until_now:
@@ -91,7 +91,7 @@ def convert_initial_data_to_pandas(data_until_now: list, data_befor_model_date: 
             value[0])), value[1], value[2], value[3], value[4], value[5], value[6], value[7]))
 
     df = pd.DataFrame(total, columns=data_settings.column_names)
-
+    raw_df = df.copy()
     # TODO: saving raw data remove if not needed
     df.to_csv(data_settings.raw_data_csv_path, index=False)
 
@@ -104,7 +104,7 @@ def convert_initial_data_to_pandas(data_until_now: list, data_befor_model_date: 
     df.pop("index")
     df.to_csv(data_settings.indicator_data_csv_path, index=False)
 
-    return df
+    return df, raw_df
 
 
 if __name__ == "__main__":
