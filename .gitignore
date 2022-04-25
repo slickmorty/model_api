@@ -6,6 +6,8 @@ test.*
 *.h5
 *.csv
 *.log
+*.json
+
 
 # C extensions
 *.so

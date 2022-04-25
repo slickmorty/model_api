@@ -78,9 +78,9 @@ def main():
             df.to_csv(data_settings.indicator_data_csv_path, index=False)
 
             # Check for model update here
-            mylogs.warn(logs.WAITING_FOR_NEXT_CANDLE)
+            mylogs.warning(logs.WAITING_FOR_NEXT_CANDLE)
 
-            time.sleep(270)
+            # time.sleep(270)
 
         time.sleep(5)
 
