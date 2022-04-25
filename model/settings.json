@@ -1,1 +1,0 @@
-{"model_date": "2022-04-22 11:30:00", "base_model_date": "2022-04-13 22:25:00", "model_path": "./model/model.h5", "base_model_path": "./model/base/model.h5", "epoches": 3, "loss": "binary_crossentropy", "optimizer": "adam", "batch_size": 24}
