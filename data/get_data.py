@@ -16,8 +16,8 @@ def get_initial_data(model_date: datetime = model_settings.model_date, symbol: s
     Returns:
         tuple[list, list]: A tuple containing list of data untill now and some data before model's date
     """
+
     # Make model date's time compatible with metatradertimesone
-    # model_date = datetime.strptime(model_date, "%y-%m-%d %H:%M:%S")
     model_date = convert_to_metatrader_timezone(model_date)
 
     if not mt5.initialize():

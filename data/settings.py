@@ -16,7 +16,5 @@ class DataSettings():
 
 
 data_settings = DataSettings()
-
-
 for key, value in data.items():
     setattr(data_settings, key, value)

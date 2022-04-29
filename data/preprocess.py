@@ -24,7 +24,7 @@ class DataProcessing():
         self.data_std = self.data.std()
 
         self.scaled_data, _, _ = self.normalize(
-            self.data, data_std=self.data_std, data_mean=self.data_mean)  # TODO ? idk what the fuck to do with data mean and datastd probably doesnt even matter
+            self.data, data_std=self.data_std, data_mean=self.data_mean)  
         # I know its wrong fuck off
         self.scaled_data = self.min_max_scaler(self.scaled_data, minimum, maximum)
 

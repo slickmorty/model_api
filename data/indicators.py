@@ -111,8 +111,6 @@ def add_class(df: pd.DataFrame) -> pd.DataFrame:
 
         return sum/future_window_size
 
-    # number_of_buys = 0
-    # number_of_sells= 0
     for i in range(len(df['Close'])-future_window_size):
         if(average(i, future_window_size) > df['Close'][i]):
             buy_or_sell_number.append(1)
