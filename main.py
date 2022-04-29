@@ -14,15 +14,8 @@ mylogs = logging.getLogger(__name__)
 
 
 def main():
-    logs.start(mylogs)
-    mylogs.info(logs.GET_INITIAL_DATA)
-    data_until_now, data_before_model_date = get_data.get_initial_data()
-    # Delete last Data cause candle is not complete yet
-    data_until_now.pop()
 
-    mylogs.info(logs.CONVERT_TO_CSV)
-    df, raw_df = get_data.convert_initial_data_to_pandas(
-        data_until_now, data_before_model_date)
+    data_until_now, df, raw_df = get_save_initial_data()
 
     if(len(data_until_now) >= 48):
 
@@ -39,13 +32,8 @@ def main():
 
     while(True):
 
-        mylogs.info(logs.GETTING_NEW_DATA)
-        # GET NEW CANDLE
-        prev_candle = list(get_data.get_prev_candle())
-
-        # convert to metatrader time and also to datetime object
-        prev_candle[0] = get_data.convert_from_metatrader_timezone(
-            datetime.fromtimestamp(prev_candle[0]))
+        # Getting latest completed candle
+        prev_candle = get_new_candle()
 
         # Check if the candle is new
         if(raw_df.iloc[-1].DateTime != prev_candle[0]):
@@ -82,7 +70,37 @@ def main():
 
             # time.sleep(270)
 
-        time.sleep(5)
+        time.sleep(1)
+
+
+def get_save_initial_data():
+    logs.start(mylogs)
+    mylogs.info(logs.GET_INITIAL_DATA)
+    data_until_now, data_before_model_date = get_data.get_initial_data()
+    # Delete last Data cause candle is not complete yet
+    data_until_now.pop()
+
+    mylogs.info(logs.CONVERT_TO_CSV)
+    df, raw_df = get_data.convert_initial_data_to_pandas(
+        data_until_now, data_before_model_date)
+
+    return data_until_now, df, raw_df
+
+
+def get_new_candle():
+    mylogs.info(logs.GETTING_NEW_DATA)
+    # GET NEW CANDLE
+    prev_candle = list(get_data.get_prev_candle())
+
+    # convert to metatrader time and also to datetime object
+    prev_candle_datetime = get_data.convert_from_metatrader_timezone(
+        datetime.fromtimestamp(prev_candle[0]))
+
+    prev_candle[1] += data_settings.time_difference_in_seconds
+    # Inserting date time in index 0 in the list so the format would be
+    # like this " datetime,timestamp,Open,High,Low,Close,tick_volume,spread,Volume "
+    prev_candle.insert(0, prev_candle_datetime)
+    return prev_candle
 
 
 if __name__ == "__main__":

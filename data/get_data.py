@@ -87,8 +87,11 @@ def convert_initial_data_to_pandas(data_until_now: list, data_befor_model_date: 
 
     total = []
     for value in data_befor_model_date+data_until_now:
-        total.append((convert_from_metatrader_timezone(datetime.fromtimestamp(
-            value[0])), value[1], value[2], value[3], value[4], value[5], value[6], value[7]))
+        date = convert_from_metatrader_timezone(
+            datetime.fromtimestamp(value[0]))
+        timestamp = date.timestamp()
+        total.append(
+            (date, timestamp, value[1], value[2], value[3], value[4], value[5], value[6], value[7]))
 
     df = pd.DataFrame(total, columns=data_settings.column_names)
     raw_df = df.copy()
