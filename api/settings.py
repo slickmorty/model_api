@@ -3,6 +3,7 @@ import json
 with open("./api/settings.json", "r") as f:
     data: dict = json.load(f)
 
+
 class APISettings():
     @staticmethod
     def save(param, param_name: str, data: dict = data):
@@ -10,6 +11,7 @@ class APISettings():
 
         with open("./api/settings.json", "w") as f:
             json.dump(data, f)
+
 
 api_settings = APISettings()
 for key, value in data.items():
