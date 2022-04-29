@@ -1,6 +1,6 @@
 from datetime import datetime
 import MetaTrader5 as mt5
-import data.settings as data_settings
+from data.settings import data_settings
 import model.settings as model_settings
 from data import indicators
 import pandas as pd

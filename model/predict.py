@@ -1,12 +1,13 @@
 from tensorflow import keras
 import pandas as pd
-from data import DataProcessing, settings as data_settings
+from data import DataProcessing
+from data.settings import data_settings
 
 
 def predict(model: keras.Model, df: pd.DataFrame, save: bool = False) -> list[int]:
 
     prediction = [-1 for i in range(data_settings.window_size-1)]
-    
+
     data = DataProcessing(
         data=df[:],
         input_width=data_settings.window_size,
@@ -14,7 +15,7 @@ def predict(model: keras.Model, df: pd.DataFrame, save: bool = False) -> list[in
         minimum=-1.0,
         maximum=1.0
     )
-    
+
     in_data = data.make_windows(data.scaled_data)
     model_predictions = model.predict(in_data)
 

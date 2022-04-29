@@ -2,7 +2,8 @@ from datetime import datetime
 from http.client import ImproperConnectionState
 from keras.models import load_model
 
-from data import get_data, settings as data_settings, indicators, DataProcessing
+from data import get_data, indicators, DataProcessing
+from data.settings import data_settings
 from model import model_update, predict, settings as model_settings
 from logs import logs
 import numpy as np
@@ -15,9 +16,10 @@ mylogs = logging.getLogger(__name__)
 
 def main():
 
-    data_until_now, df, raw_df = get_save_initial_data()
+    data_until_now, df, raw_df = get_and_save_initial_data()
 
-    if(len(data_until_now) >= 48):
+    # Check if the model needs to be updated initially
+    if(len(data_until_now) >= data_settings.future_window_size * 2):
 
         mylogs.critical(logs.UPDATE_MODEL_INITIALLY)
         model, data = model_update.update_model_with_initial_info(df)
@@ -73,7 +75,7 @@ def main():
         time.sleep(1)
 
 
-def get_save_initial_data():
+def get_and_save_initial_data() -> tuple[list, pd.DataFrame, pd.DataFrame]:
     logs.start(mylogs)
     mylogs.info(logs.GET_INITIAL_DATA)
     data_until_now, data_before_model_date = get_data.get_initial_data()
@@ -84,10 +86,11 @@ def get_save_initial_data():
     df, raw_df = get_data.convert_initial_data_to_pandas(
         data_until_now, data_before_model_date)
 
+    # Data until now is in meta timezone
     return data_until_now, df, raw_df
 
 
-def get_new_candle():
+def get_new_candle() -> list:
     mylogs.info(logs.GETTING_NEW_DATA)
     # GET NEW CANDLE
     prev_candle = list(get_data.get_prev_candle())
@@ -96,7 +99,7 @@ def get_new_candle():
     prev_candle_datetime = get_data.convert_from_metatrader_timezone(
         datetime.fromtimestamp(prev_candle[0]))
 
-    prev_candle[1] += data_settings.time_difference_in_seconds
+    prev_candle[0] += data_settings.time_difference_in_seconds
     # Inserting date time in index 0 in the list so the format would be
     # like this " datetime,timestamp,Open,High,Low,Close,tick_volume,spread,Volume "
     prev_candle.insert(0, prev_candle_datetime)

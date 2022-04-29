@@ -1,7 +1,9 @@
 import datetime as dt
 import pandas as pd
-from data.settings import future_window_size
+from data.settings import data_settings
 import ta
+
+future_window_size = data_settings.future_window_size
 
 
 def add_indicators(df: pd.core.frame.DataFrame) -> pd.core.frame.DataFrame:

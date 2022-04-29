@@ -1,20 +1,18 @@
-from tensorflow import keras,metrics
+from tensorflow import keras, metrics
 from keras.models import load_model
 import numpy as np
 import pandas as pd
 
 from data import DataProcessing
-from data import settings as data_settings
+from data.settings import data_settings
 from model import settings as model_settings
-
 
 
 def compile_and_fit(model: keras.Model, input_window: np.ndarray, output_window: np.ndarray) -> None:
 
-
     model.compile(loss=model_settings.loss,
-                    optimizer=model_settings.optimizer,
-                    metrics=[metrics.BinaryAccuracy()])
+                  optimizer=model_settings.optimizer,
+                  metrics=[metrics.BinaryAccuracy()])
     model.fit(
         x=input_window,
         y=output_window,

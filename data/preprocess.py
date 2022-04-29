@@ -1,5 +1,5 @@
 import pandas as pd
-import data.settings as data_settings
+from data.settings import data_settings
 import numpy as np
 from tensorflow import one_hot
 
