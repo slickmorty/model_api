@@ -1,13 +1,11 @@
 from datetime import datetime
-from http.client import ImproperConnectionState
 from keras.models import load_model
 
-from data import get_data, indicators, DataProcessing
+from data import get_data, indicators
 from data.settings import data_settings
 from model import model_update, predict
 from model.settings import model_settings
 from logs import logs
-import numpy as np
 import pandas as pd
 import time
 
