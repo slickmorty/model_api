@@ -1,7 +1,7 @@
 from datetime import datetime
 import MetaTrader5 as mt5
 from data.settings import data_settings
-import model.settings as model_settings
+from model.settings import model_settings
 from data import indicators
 import pandas as pd
 

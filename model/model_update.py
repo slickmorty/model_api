@@ -5,7 +5,7 @@ import pandas as pd
 
 from data import DataProcessing
 from data.settings import data_settings
-from model import settings as model_settings
+from model.settings import model_settings
 
 
 def compile_and_fit(model: keras.Model, input_window: np.ndarray, output_window: np.ndarray) -> None:
@@ -38,9 +38,9 @@ def update_model_with_initial_info(df: pd.DataFrame) -> tuple[keras.Model, DataP
 
     model.save(model_settings.model_path)
 
-    model_settings.model_date = str(
-        df.iloc[-data_settings.future_window_size]["DateTime"])
-    model_settings.save(param=model_settings.model_date,
+    model_settings.model_date = df.iloc[-data_settings.future_window_size]["DateTime"]
+
+    model_settings.save(param=str(model_settings.model_date),
                         param_name="model_date")
 
     return model, data

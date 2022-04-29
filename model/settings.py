@@ -1,22 +1,34 @@
 import json
 from datetime import datetime
 
+
 with open("./model/settings.json", "r") as f:
     data: dict = json.load(f)
 
-model_date: datetime = datetime.strptime(
-    data.get("model_date"), "%Y-%m-%d %H:%M:%S")
-base_model_date: str = data.get("base_model_date")
-model_path: str = data.get("model_path")
-base_model_path: str = data.get("base_model_path")
-epoches: int = data.get("epoches")
-loss: str = data.get("loss")
-optimizer: str = data.get("optimizer")
-batch_size: int = data.get("batch_size")
+
+class ModelSettings():
+
+    @staticmethod
+    def save(param, param_name: str, data: dict = data):
+        data[f"{param_name}"] = param
+
+        with open("./model/settings.json", "w") as f:
+            json.dump(data, f)
+
+        if isinstance(model_settings.model_date, str):
+            model_settings.model_date = datetime.strptime(
+                model_settings.model_date, "%Y-%m-%d %H:%M:%S")
+
+        if isinstance(model_settings.base_model_date, str):
+            model_settings.base_model_date = datetime.strptime(
+                model_settings.base_model_date, "%Y-%m-%d %H:%M:%S")
 
 
-def save(param, param_name: str, data: dict = data):
-    data[f"{param_name}"] = param
+model_settings = ModelSettings()
+for key, value in data.items():
+    setattr(model_settings, key, value)
 
-    with open("./model/settings.json", "w") as f:
-        json.dump(data, f)
+model_settings.model_date = datetime.strptime(
+    model_settings.model_date, "%Y-%m-%d %H:%M:%S")
+model_settings.base_model_date = datetime.strptime(
+    model_settings.base_model_date, "%Y-%m-%d %H:%M:%S")
