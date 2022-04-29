@@ -38,6 +38,7 @@ def update_model_with_initial_info(df: pd.DataFrame) -> tuple[keras.Model, DataP
 
     model.save(model_settings.model_path)
 
+    # TODO change df datatypes maybe?
     model_settings.model_date = df.iloc[-data_settings.future_window_size]["DateTime"]
 
     model_settings.save(param=str(model_settings.model_date),

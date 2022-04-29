@@ -1,7 +1,6 @@
 import json
 from datetime import datetime
 
-
 with open("./model/settings.json", "r") as f:
     data: dict = json.load(f)
 

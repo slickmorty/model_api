@@ -19,6 +19,7 @@ def predict(model: keras.Model, df: pd.DataFrame, save: bool = False) -> list[in
     in_data = data.make_windows(data.scaled_data)
     model_predictions = model.predict(in_data)
 
+    # TODO maybe add the value of predictions too?
     for _, value in enumerate(model_predictions):
         if(value[0] > 0.5):
             prediction.append(0)
