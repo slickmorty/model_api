@@ -1,6 +1,6 @@
 import json
 import requests
-from api import settings as api_settings
+from api.settings import api_settings
 
 
 def delete_all() -> requests.Response:
@@ -14,7 +14,7 @@ def delete_all() -> requests.Response:
     })
     headers = {
         "Content-Type": api_settings.content_type,
-        "Access-Control-Request-Headers": api_settings.acrh,
+        "Access-Control-Request-Headers": api_settings.access_control_request_headers,
         "api-key": api_settings.api_key
     }
 
