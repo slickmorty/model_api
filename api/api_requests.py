@@ -26,12 +26,13 @@ def delete_all() -> requests.Response:
 def insert_all(df: pd.DataFrame) -> requests.Response:
 
     url = api_settings.insert_many
+    records = df.to_dict("records")
 
     payload = json.dumps({
         "collection": api_settings.collection,
         "database": api_settings.database,
         "dataSource": api_settings.data_source,
-        "documents": df.to_dict("records")
+        "documents": records
     })
     headers = {
         "Content-Type": api_settings.content_type,
@@ -48,12 +49,11 @@ def insert_one(df: pd.DataFrame) -> requests.Response:
     if(len(df) > 1):
         return
     url = api_settings.insert_one
-
     payload = json.dumps({
         "collection": api_settings.collection,
         "database": api_settings.database,
         "dataSource": api_settings.data_source,
-        "documents": df.to_dict("records")
+        "document": df.to_dict("records")[0]
     })
     headers = {
         "Content-Type": api_settings.content_type,
