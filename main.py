@@ -1,21 +1,28 @@
 from datetime import datetime
 from keras.models import load_model
-
-from data import get_data, indicators
-from data.settings import data_settings
-from model import model_update, predict
-from model.settings import model_settings
-from logs import logs
+import requests
 import pandas as pd
 import time
-
 import logging
+
+from data.settings import data_settings
+from data import get_data, indicators
+from model import model_update, predict
+from model.settings import model_settings
+from api import api_requests
+from logs import logs
+
 mylogs = logging.getLogger(__name__)
 
 
 def main():
 
     data_until_now, df, raw_df = get_and_save_initial_data()
+
+    # Delete all previous data in database
+    delete_all_data_in_database()
+    # Adding all new data in database
+    add_all_new_data_in_database(df=df)
 
     # Check if the model needs to be updated initially
     if(len(data_until_now) >= data_settings.future_window_size * 2):
@@ -30,7 +37,6 @@ def main():
 
     mylogs.info(logs.PREDICTING)
     prediction = predict.predict(model, df, True)
-
     while(True):
 
         # Getting latest completed candle
@@ -56,7 +62,8 @@ def main():
             df_copy = indicators.add_class(df_copy)
 
             # Make it as small as possible
-            df_copy = df_copy[-256:].reset_index(drop=True)
+            df_copy = df_copy[-data_settings.window_size:
+                              ].reset_index(drop=True)
 
             # Predict
             predict.predict(model, df_copy)
@@ -69,9 +76,59 @@ def main():
             # Check for model update here
             mylogs.warning(logs.WAITING_FOR_NEXT_CANDLE)
 
+            # Convert DateTime to str so can be sendable in json
+            df.loc[len(df)-1:, "DateTime"] = df.iloc[-1:].DateTime.astype(str)
+
+            # Adding all new data in database
+            add_new_data_in_database(df=df.iloc[-1:])
+
             # time.sleep(270)
 
         time.sleep(1)
+
+
+def delete_all_data_in_database() -> requests.Response:
+
+    response = requests.Response()
+    while response.status_code != requests.status_codes.codes["okay"]:
+        try:
+            mylogs.info(logs.DELETING_ALL_DATA)
+            response = api_requests.delete_all()
+            mylogs.info(response)
+        except Exception as e:
+            mylogs.critical(logs.TRY_FAILED)
+            print(e)
+            time.sleep(5)
+    return response
+
+
+def add_all_new_data_in_database(df: pd.DataFrame) -> requests.Response:
+
+    response = requests.Response()
+    while response.status_code != requests.status_codes.codes["created"]:
+        try:
+            mylogs.warning(logs.ADDING_NEW_DATA)
+            response = api_requests.insert_all(df=df)
+            mylogs.info(response)
+        except Exception as e:
+            mylogs.critical(logs.TRY_FAILED)
+            print(e)
+            time.sleep(5)
+    return response
+
+
+def add_new_data_in_database(df: pd.DataFrame) -> requests.Response:
+    response = requests.Response()
+    while response.status_code != requests.status_codes.codes["created"]:
+        try:
+            mylogs.warning(logs.ADDING_NEW_DATA)
+            response = api_requests.insert_one(df=df)
+            mylogs.info(response)
+        except Exception as e:
+            mylogs.critical(logs.TRY_FAILED)
+            print(e)
+            time.sleep(5)
+    return response
 
 
 def get_and_save_initial_data() -> tuple[list, pd.DataFrame, pd.DataFrame]:
@@ -86,6 +143,8 @@ def get_and_save_initial_data() -> tuple[list, pd.DataFrame, pd.DataFrame]:
         data_until_now, data_before_model_date)
 
     # Data until now is in meta timezone
+    # make datetime in data frame a str so i can send it in json
+    df.DateTime = df.DateTime.astype(str)
     return data_until_now, df, raw_df
 
 
