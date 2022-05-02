@@ -14,6 +14,9 @@ GETTING_NEW_DATA = "Getting new data"
 NEW_CANDLE_DETECTED = "New Candle Detected"
 SAVING_CAREFULL = "********* Saving Data on disk, BE CAREFULL ***********"
 WAITING_FOR_NEXT_CANDLE = "********* Waiting for next candle, At least 5 mins ***********"
+DELETING_ALL_DATA = "********* Deleting all previous data in database ***********"
+ADDING_NEW_DATA = "********* ADDING NEW DATA IN DATABASE ***********"
+FIRST_TRY_FAILED = "********* FIRST TRY FAILED *********"
 
 
 def make_logs(logs):
@@ -35,5 +38,9 @@ def make_logs(logs):
 
 
 def start(logs):
-    logs.warning(
-        "\n\n\t********************\tSTARTING DON'T TOUCH KEYBOARD\t********************n\n")
+    logs.warning("""
+    *****************************************************************************
+    *****************************************************************************
+    ********************    STARTING DON'T TOUCH KEYBOARD    ********************
+    *****************************************************************************
+    *****************************************************************************""")
