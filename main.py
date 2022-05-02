@@ -21,6 +21,7 @@ def main():
 
     # Delete all previous data in database
     delete_all_data_in_database()
+
     # Adding all new data in database
     add_all_new_data_in_database(df=df)
 
@@ -81,8 +82,6 @@ def main():
 
             # Adding all new data in database
             add_new_data_in_database(df=df.iloc[-1:])
-
-            # time.sleep(270)
 
         time.sleep(1)
 
