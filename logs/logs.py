@@ -16,7 +16,7 @@ SAVING_CAREFULL = "********* Saving Data on disk, BE CAREFULL ***********"
 WAITING_FOR_NEXT_CANDLE = "********* Waiting for next candle, At least 5 mins ***********"
 DELETING_ALL_DATA = "********* Deleting all previous data in database ***********"
 ADDING_NEW_DATA = "********* ADDING NEW DATA IN DATABASE ***********"
-FIRST_TRY_FAILED = "********* FIRST TRY FAILED *********"
+TRY_FAILED = "********* TRY FAILED *********"
 
 
 def make_logs(logs):
