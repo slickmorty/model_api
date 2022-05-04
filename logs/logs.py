@@ -17,6 +17,10 @@ WAITING_FOR_NEXT_CANDLE = "********* Waiting for next candle, At least 5 mins **
 DELETING_ALL_DATA = "********* Deleting all previous data in database ***********"
 ADDING_NEW_DATA = "********* ADDING NEW DATA IN DATABASE ***********"
 TRY_FAILED = "********* TRY FAILED *********"
+UPDATING_MODEL = """
+\t********************                  UPDATING_MODEL                      ********************
+\t********************              THIS COULD TAKE SOME TIME               ********************
+\t********************          DON'T TOUCH THE KEYBOARD PLZ <3             ********************"""
 
 
 def make_logs(logs):

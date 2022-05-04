@@ -5,6 +5,8 @@ import pandas as pd
 import time
 import logging
 
+from sklearn import datasets
+
 from data.settings import data_settings
 from data import get_data, indicators
 from model import model_update, predict
@@ -26,12 +28,12 @@ def main():
     add_all_new_data_in_database(df=df)
 
     # Check if the model needs to be updated initially
-    if(len(data_until_now) >= data_settings.future_window_size * 2):
+    #data_settings.future_window_size *2
+    if(len(data_until_now) >= data_settings.future_window_size):
 
         mylogs.critical(logs.UPDATE_MODEL_INITIALLY)
         model, data = model_update.update_model_with_initial_info(df)
         mylogs.info(logs.FINISHED_UPDATING)
-
     else:
         mylogs.info(logs.LOADING)
         model = load_model(model_settings.model_path)
@@ -83,7 +85,25 @@ def main():
             # Adding all new data in database
             add_new_data_in_database(df=df.iloc[-1:])
 
+            print(
+                f'candles to update: {(data_settings.future_window_size * 2)-len(df[df.Real == -1])}')
+
+        # Check if the model needs to be updated
+        if(len(df[df.Real == -1]) >= data_settings.future_window_size * 2):
+
+            update_the_model(df)
+
         time.sleep(1)
+
+
+def update_the_model(df):
+    # update Real column
+    indicators.add_class(df)
+    df.to_csv(data_settings.indicator_data_csv_path, index=False)
+
+    mylogs.critical(logs.UPDATING_MODEL)
+    model, _ = model_update.update_model(
+        df[-data_settings.window_size-data_settings.future_window_size*2:], model=model)
 
 
 def delete_all_data_in_database() -> requests.Response:

@@ -45,3 +45,23 @@ def update_model_with_initial_info(df: pd.DataFrame) -> tuple[keras.Model, DataP
                         param_name="model_date")
 
     return model, data
+
+
+def update_model(df: pd.DataFrame, model: keras.Model) -> tuple[keras.Model, DataProcessing]:
+
+    data = DataProcessing(
+        data=df[:-data_settings.future_window_size],
+        input_width=data_settings.window_size,
+        stockname=data_settings.symbol,
+        minimum=data_settings.min_value,
+        maximum=data_settings.max_value
+    )
+
+    input_window, output_window = data.windows
+    compile_and_fit(model, input_window, output_window)
+    model.save(model_settings.model_path)
+
+    model_settings.model_date = df.iloc[-data_settings.future_window_size]["DateTime"]
+    model_settings.save(param=str(model_settings.model_date),
+                        param_name="model_date")
+    return model, data
