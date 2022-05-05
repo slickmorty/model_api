@@ -13,6 +13,7 @@ class DataProcessing():
             minimum: float = -1.0, maximum: float = 1.0):
 
         data.pop("DateTime")
+        data.reset_index(inplace=True,drop=True)
         self.data = pd.DataFrame()
         for column in data_settings.indicators+data_settings.candle_params:
             self.data[f"{column}"] = data[f"{column}"]
@@ -28,7 +29,7 @@ class DataProcessing():
         # I know its wrong fuck off
         self.scaled_data = self.min_max_scaler(self.scaled_data, minimum, maximum)
 
-    def make_windows(self, input_data: pd.core.frame.DataFrame, output_data: pd.core.series.Series = None, convert_to_numpy: bool = True):
+    def make_windows(self, input_data: pd.core.frame.DataFrame, output_data: list = None, convert_to_numpy: bool = True):
 
         window_input = []
 
@@ -36,9 +37,8 @@ class DataProcessing():
             for i in range(self.input_width, len(input_data)+1):
 
                 window_input.append(
-                    input_data[i-self.input_width:i].reset_index())
+                    input_data[i-self.input_width:i].reset_index(drop=True))
 
-                window_input[-1].pop("index")
 
                 # convert pd.DataFrame to numpy
                 window_input[-1] = window_input[-1].to_numpy()
@@ -55,9 +55,8 @@ class DataProcessing():
             for i in range(self.input_width, len(input_data)):
 
                 window_input.append(
-                    input_data[i-self.input_width:i].reset_index())
+                    input_data[i-self.input_width:i].reset_index(drop=True))
                 window_output.append(output_data[i-1])
-                window_input[-1].pop("index")
                 # convert pd.DataFrame to numpy
                 window_input[-1] = window_input[-1].to_numpy()
 
@@ -90,10 +89,4 @@ class DataProcessing():
         data_scaled = data_std*(abs(minimum)+maximum)+minimum
         return data_scaled
 
-    @property
-    def windows(self):
-        return self.make_windows(
-            input_data=self.scaled_data,
-            output_data=self.output,
-            convert_to_numpy=True)
     
