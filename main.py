@@ -91,19 +91,20 @@ def main():
         # Check if the model needs to be updated
         if(len(df[df.Real == -1]) >= data_settings.future_window_size * 2):
 
-            update_the_model(df)
+            model = update_the_model(df, model)
 
         time.sleep(1)
 
 
-def update_the_model(df):
+def update_the_model(df, model):
     # update Real column
     indicators.add_class(df)
     df.to_csv(data_settings.indicator_data_csv_path, index=False)
 
     mylogs.critical(logs.UPDATING_MODEL)
-    model, _ = model_update.update_model(
+    new_model, _ = model_update.update_model(
         df[-data_settings.window_size-data_settings.future_window_size*2:], model=model)
+    return new_model
 
 
 def delete_all_data_in_database() -> requests.Response:
