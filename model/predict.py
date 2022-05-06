@@ -7,6 +7,7 @@ from data.settings import data_settings
 def predict(model: keras.Model, df: pd.DataFrame, save: bool = False) -> list[int]:
 
     prediction = [-1 for i in range(data_settings.window_size-1)]
+    prediction_value = [-1 for i in range(data_settings.window_size-1)]
 
     data = DataProcessing(
         data=df[:],
@@ -21,12 +22,14 @@ def predict(model: keras.Model, df: pd.DataFrame, save: bool = False) -> list[in
 
     # TODO maybe add the value of predictions too?
     for _, value in enumerate(model_predictions):
+        prediction_value.append(value)
         if(value[0] > 0.5):
             prediction.append(0)
         else:
             prediction.append(1)
 
     df["Prediction"] = prediction
+    df["Prediction_Value"]
     if(save):
         df.to_csv(data_settings.indicator_data_csv_path, index=False)
     return prediction
