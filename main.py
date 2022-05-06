@@ -24,12 +24,11 @@ def main():
     # Delete all previous data in database
     delete_all_data_in_database()
 
-    # Adding all new data in database
-    add_all_new_data_in_database(df=df)
+    # Adding all new data in database(only some of the new ones)
+    add_all_new_data_in_database(df=df[-data_settings.window_size:])
 
     # Check if the model needs to be updated initially
-    #data_settings.future_window_size *2
-    if(len(data_until_now) >= data_settings.future_window_size):
+    if(len(data_until_now) >= data_settings.future_window_size*2):
 
         mylogs.critical(logs.UPDATE_MODEL_INITIALLY)
         model, data = model_update.update_model_with_initial_info(df)
@@ -98,7 +97,7 @@ def main():
 
 def update_the_model(df, model):
     # update Real column
-    indicators.add_class(df)
+    df = indicators.add_class(df)
     df.to_csv(data_settings.indicator_data_csv_path, index=False)
 
     mylogs.critical(logs.UPDATING_MODEL)
@@ -128,7 +127,7 @@ def add_all_new_data_in_database(df: pd.DataFrame) -> requests.Response:
     while response.status_code != requests.status_codes.codes["created"]:
         try:
             mylogs.warning(logs.ADDING_NEW_DATA)
-            response = api_requests.insert_all(df=df)
+            response = api_requests.insert_all(df=df[-256:])
             mylogs.info(response)
         except Exception as e:
             mylogs.critical(logs.TRY_FAILED)
