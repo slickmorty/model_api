@@ -33,7 +33,10 @@ def update_model_with_initial_info(df: pd.DataFrame) -> tuple[keras.Model, DataP
         maximum=data_settings.max_value
     )
     model = load_model(model_settings.model_path)
-    input_window, output_window = data.windows
+    input_window, output_window = data.make_windows(input_data=data.scaled_data,
+                                                    output_data=data.output,
+                                                    convert_to_numpy=True)
+
     compile_and_fit(model, input_window, output_window)
 
     model.save(model_settings.model_path)
@@ -57,7 +60,9 @@ def update_model(df: pd.DataFrame, model: keras.Model) -> tuple[keras.Model, Dat
         maximum=data_settings.max_value
     )
 
-    input_window, output_window = data.windows
+    input_window, output_window = data.make_windows(input_data=data.scaled_data,
+                                                    output_data=data.output,
+                                                    convert_to_numpy=True)
     compile_and_fit(model, input_window, output_window)
     model.save(model_settings.model_path)
 
