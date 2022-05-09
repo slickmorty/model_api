@@ -83,10 +83,17 @@ def convert_from_metatrader_timezone(date: datetime) -> datetime:
     return date
 
 
-def convert_initial_data_to_pandas(data_until_now: list, data_befor_model_date: list) -> tuple[pd.DataFrame, pd.DataFrame]:
+def convert_initial_data_to_pandas(data_until_now: list, data_before_model_date: list, test: bool = False) -> tuple[pd.DataFrame, pd.DataFrame]:
+
+    if not test:
+        data_with_indicator_path = data_settings.indicator_data_csv_path
+        raw_data_path = data_settings.raw_data_csv_path
+    else:
+        data_with_indicator_path = data_settings.indicator_test_data_csv_path
+        raw_data_path = data_settings.raw_test_data_csv_path
 
     total = []
-    for value in data_befor_model_date+data_until_now:
+    for value in data_before_model_date+data_until_now:
         date = convert_from_metatrader_timezone(
             datetime.fromtimestamp(value[0]))
         timestamp = date.timestamp()
@@ -96,7 +103,7 @@ def convert_initial_data_to_pandas(data_until_now: list, data_befor_model_date: 
     df = pd.DataFrame(total, columns=data_settings.column_names)
     raw_df = df.copy()
     # TODO: saving raw data remove if not needed
-    df.to_csv(data_settings.raw_data_csv_path, index=False)
+    df.to_csv(raw_data_path, index=False)
 
     df = indicators.add_indicators(df)
     df = indicators.add_candles(df)
@@ -105,7 +112,7 @@ def convert_initial_data_to_pandas(data_until_now: list, data_befor_model_date: 
         data_settings.candles_with_nan)], axis=0)
     df = df.reset_index()
     df.pop("index")
-    df.to_csv(data_settings.indicator_data_csv_path, index=False)
+    df.to_csv(data_with_indicator_path, index=False)
 
     return df, raw_df
 

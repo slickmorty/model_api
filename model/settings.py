@@ -22,6 +22,10 @@ class ModelSettings():
             model_settings.base_model_date = datetime.strptime(
                 model_settings.base_model_date, "%Y-%m-%d %H:%M:%S")
 
+        if isinstance(model_settings.test_model_date, str):
+            model_settings.test_model_date = datetime.strptime(
+                model_settings.test_model_date, "%Y-%m-%d %H:%M:%S")
+
 
 model_settings = ModelSettings()
 for key, value in data.items():
@@ -31,3 +35,5 @@ model_settings.model_date = datetime.strptime(
     model_settings.model_date, "%Y-%m-%d %H:%M:%S")
 model_settings.base_model_date = datetime.strptime(
     model_settings.base_model_date, "%Y-%m-%d %H:%M:%S")
+model_settings.test_model_date = datetime.strptime(
+    model_settings.test_model_date, "%Y-%m-%d %H:%M:%S")
