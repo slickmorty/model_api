@@ -50,8 +50,7 @@ def update_model_with_initial_info(df: pd.DataFrame) -> tuple[keras.Model, DataP
     return model, data
 
 
-def update_model(df: pd.DataFrame, model: keras.Model) -> tuple[keras.Model, DataProcessing]:
-
+def update_model(df: pd.DataFrame, model: keras.Model, test: bool = False) -> tuple[keras.Model, DataProcessing]:
     data = DataProcessing(
         data=df[:-data_settings.future_window_size],
         input_width=data_settings.window_size,
@@ -64,9 +63,11 @@ def update_model(df: pd.DataFrame, model: keras.Model) -> tuple[keras.Model, Dat
                                                     output_data=data.output,
                                                     convert_to_numpy=True)
     compile_and_fit(model, input_window, output_window)
-    model.save(model_settings.model_path)
 
-    model_settings.model_date = df.iloc[-data_settings.future_window_size]["DateTime"]
-    model_settings.save(param=str(model_settings.model_date),
-                        param_name="model_date")
+    if not test:
+        model.save(model_settings.model_path)
+
+        model_settings.model_date = df.iloc[-data_settings.future_window_size]["DateTime"]
+        model_settings.save(param=str(model_settings.model_date),
+                            param_name="model_date")
     return model, data
