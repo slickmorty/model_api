@@ -61,18 +61,26 @@ def test():
             model = update_the_model(df, model)
             counter = data_settings.future_window_size
 
+            # Save the data
             raw_df.to_csv(data_settings.raw_test_data_csv_path, index=False)
             df.to_csv(data_settings.indicator_test_data_csv_path, index=False)
 
+            # Save the model
             model.save(model_settings.test_model_path)
             model_settings.test_model_date = df.iloc[-data_settings.future_window_size]["DateTime"]
             model_settings.save(param=str(model_settings.test_model_date),
                                 param_name="test_model_date")
 
+            # Giga wierd memory management issue
+            # solved with this line :))))))))))))
             model = load_model(model_settings.test_model_path)
 
+            # List of objects in local and global scope
             for key, value in locals().items():
-                print(key, " : ", asizeof.asizeof(value) / 1024)
+                print(key, " : ", asizeof.asizeof(value) / 1024*1024, " MB")
+
+            for key, value in globals().items():
+                print(key, " : ", asizeof.asizeof(value) / 1024*1024, " MB")
 
 
 #   SAVE DATA ON DISK
