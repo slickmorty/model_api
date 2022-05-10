@@ -1,8 +1,7 @@
 from datetime import datetime
 from keras.models import load_model
-from tensorflow import metrics
-import requests
-import pandas as pd
+from pympler import asizeof
+
 
 from data.settings import data_settings
 from data import get_data, indicators
@@ -20,8 +19,13 @@ def test():
     df, raw_df = get_data.convert_initial_data_to_pandas(
         data_until_now=[], data_before_model_date=data_before_model_date, test=True)
 
+    model = load_model(model_settings.test_model_path)
+    prediction = predict.predict(model, df, True)
+
+    counter = 0
     for index, value in enumerate(data_until_now):
 
+        print(index)
         # Getting latest completed candle
         prev_candle = get_new_candle(value=value)
 
@@ -35,7 +39,6 @@ def test():
 
             # Save new data in raw_df
             raw_df.loc[len(raw_df)] = prev_candle
-            raw_df.to_csv(data_settings.raw_data_csv_path, index=False)
 
             # Adding indicators
             df_copy = indicators.add_indicators(df_copy)
@@ -51,49 +54,44 @@ def test():
 
             # َADD to data frame and save
             df.loc[len(df)] = df_copy.iloc[-1]
-            df.to_csv(data_settings.indicator_data_csv_path, index=False)
-
-            # Check for model update here
-
-            # Convert DateTime to str so can be sendable in json
-            df.loc[len(df)-1:, "DateTime"] = df.iloc[-1:].DateTime.astype(str)
-
-            # Adding all new data in database
-            # add_new_data_in_database(df=df.iloc[-1:])
-
-            print(
-                f'candles to update: {(data_settings.future_window_size * 2)-len(df[df.Real == -1])}')
-
-            # TODO COUNTER = +=1
+            counter += 1
 
         # Check if the model needs to be updated
-        # TODO if(COUNTER >= FUTURE_WINDOW_SIZE)
-        if(len(df[df.Real == -1]) >= data_settings.future_window_size * 2):
-
+        if(counter >= data_settings.future_window_size * 2):
             model = update_the_model(df, model)
-            # TODO COUNTER=0
+            counter = data_settings.future_window_size
+
+            raw_df.to_csv(data_settings.raw_test_data_csv_path, index=False)
+            df.to_csv(data_settings.indicator_test_data_csv_path, index=False)
+
+            model.save(model_settings.test_model_path)
+            model_settings.test_model_date = df.iloc[-data_settings.future_window_size]["DateTime"]
+            model_settings.save(param=str(model_settings.test_model_date),
+                                param_name="test_model_date")
+
+            model = load_model(model_settings.test_model_path)
+
+            for key, value in locals().items():
+                print(key, " : ", asizeof.asizeof(value) / 1024)
+
+
+#   SAVE DATA ON DISK
+    raw_df.to_csv(data_settings.raw_test_data_csv_path, index=False)
+    df.to_csv(data_settings.indicator_test_data_csv_path, index=False)
+
+    model.save(model_settings.test_model_path)
+
+    model_settings.test_model_date = df.iloc[-data_settings.future_window_size]["DateTime"]
+    model_settings.save(param=str(model_settings.test_model_date),
+                        param_name="test_model_date")
 
 
 def update_the_model(df, model):
     # update Real column
-    df = indicators.add_class(df)
-    df.to_csv(data_settings.indicator_data_csv_path, index=False)
-
+    indicators.add_class(df)
     new_model, _ = model_update.update_model(
-        df[-data_settings.window_size-data_settings.future_window_size*2:], model=model)
+        df[-data_settings.window_size-data_settings.future_window_size*2:], model=model, test=True)
     return new_model
-
-
-def delete_all_data_in_database() -> requests.Response:
-
-    response = requests.Response()
-    while response.status_code != requests.status_codes.codes["okay"]:
-        try:
-            response = api_requests.delete_all()
-        except Exception as e:
-            print(e)
-            time.sleep(5)
-    return response
 
 
 def get_new_candle(value: tuple) -> list:

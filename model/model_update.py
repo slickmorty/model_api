@@ -13,6 +13,7 @@ def compile_and_fit(model: keras.Model, input_window: np.ndarray, output_window:
     model.compile(loss=model_settings.loss,
                   optimizer=model_settings.optimizer,
                   metrics=[metrics.BinaryAccuracy()])
+
     model.fit(
         x=input_window,
         y=output_window,
