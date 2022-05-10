@@ -4,6 +4,7 @@ import requests
 import pandas as pd
 import time
 import logging
+from pympler import asizeof
 
 from data.settings import data_settings
 from data import get_data, indicators
@@ -11,6 +12,7 @@ from model import model_update, predict
 from model.settings import model_settings
 from api import api_requests
 from logs import logs
+
 
 mylogs = logging.getLogger(__name__)
 
@@ -25,12 +27,12 @@ def main():
     # Adding all new data in database(only some of the new ones)
     add_all_new_data_in_database(df=df[-data_settings.window_size:])
 
-    # TODO COUNTER = LEN(data_until_now)
+    counter = len(data_until_now)
 
     # Check if the model needs to be updated initially
     if(len(data_until_now) >= data_settings.future_window_size*2):
 
-        # TODO COUNTER = 0
+        counter = data_settings.future_window_size
 
         mylogs.critical(logs.UPDATE_MODEL_INITIALLY)
         model, data = model_update.update_model_with_initial_info(df)
@@ -89,14 +91,23 @@ def main():
             print(
                 f'candles to update: {(data_settings.future_window_size * 2)-len(df[df.Real == -1])}')
 
-            # TODO COUNTER = +=1
+            counter += 1
 
         # Check if the model needs to be updated
-        # TODO if(COUNTER >= FUTURE_WINDOW_SIZE)
-        if(len(df[df.Real == -1]) >= data_settings.future_window_size * 2):
+        if(counter >= data_settings.future_window_size * 2):
 
             model = update_the_model(df, model)
-            # TODO COUNTER=0
+            counter = 24
+
+            # Very very wierd memory management issue is solved with this
+            # Holy shit wtf is this
+            model = load_model(model_settings.model_path)
+
+            for key, value in locals().items():
+                print(key, " : ", asizeof.asizeof(value) / 1024*1024, " MB")
+
+            for key, value in globals().items():
+                print(key, " : ", asizeof.asizeof(value) / 1024*1024, " MB")
 
         time.sleep(1)
 
