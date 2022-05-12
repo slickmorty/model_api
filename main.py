@@ -49,7 +49,7 @@ def main(send_to_database: bool = True):
     # Append all new data in a all_so_far_dataframe
     all_so_far = pd.read_csv(data_settings.all_data_so_far_path)
     all_so_far = pd.concat(
-        [all_so_far, df[df.TimeStamp > all_so_far.TimeStamp.iloc[-1]][df.Prediction != -1].reset_index(drop=True)], ignore_index=True)
+        [all_so_far, df[df.TimeStamp > all_so_far.TimeStamp.iloc[-1]][df.Prediction != -1]], ignore_index=True)
     all_so_far.to_csv(data_settings.all_data_so_far_path, index=False)
 
     while(True):
