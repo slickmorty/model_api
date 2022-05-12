@@ -17,15 +17,17 @@ from logs import logs
 mylogs = logging.getLogger(__name__)
 
 
-def main():
+def main(send_to_database: bool = True):
 
     data_until_now, df, raw_df = get_and_save_initial_data()
 
     # Delete all previous data in database
-    delete_all_data_in_database()
+    if send_to_database:
+        delete_all_data_in_database()
 
     # Adding all new data in database(only some of the new ones)
-    add_all_new_data_in_database(df=df[-data_settings.window_size:])
+    if send_to_database:
+        add_all_new_data_in_database(df=df[-data_settings.window_size:])
 
     counter = len(data_until_now)
 
@@ -43,6 +45,13 @@ def main():
 
     mylogs.info(logs.PREDICTING)
     prediction = predict.predict(model, df, True)
+
+    # Append all new data in a all_so_far_dataframe
+    all_so_far = pd.read_csv(data_settings.all_data_so_far_path)
+    all_so_far = pd.concat(
+        [all_so_far, df[df.TimeStamp > all_so_far.TimeStamp.iloc[-1]][df.Prediction != -1]], ignore_index=True)
+    all_so_far.to_csv(data_settings.all_data_so_far_path, index=False)
+
     while(True):
 
         # Getting latest completed candle
@@ -79,6 +88,10 @@ def main():
             df.loc[len(df)] = df_copy.iloc[-1]
             df.to_csv(data_settings.indicator_data_csv_path, index=False)
 
+            # Add to all_so_far
+            all_so_far.loc[len(all_so_far)] = df_copy.iloc[-1]
+            all_so_far.to_csv(data_settings.all_data_so_far_path, index=False)
+
             # Check for model update here
             mylogs.warning(logs.WAITING_FOR_NEXT_CANDLE)
 
@@ -86,10 +99,11 @@ def main():
             df.loc[len(df)-1:, "DateTime"] = df.iloc[-1:].DateTime.astype(str)
 
             # Adding all new data in database
-            add_new_data_in_database(df=df.iloc[-1:])
+            if send_to_database:
+                add_new_data_in_database(df=df.iloc[-1:])
 
             print(
-                f'candles to update: {(data_settings.future_window_size * 2)-len(df[df.Real == -1])}')
+                f'candles to update: {(data_settings.future_window_size * 2)-counter}')
 
             counter += 1
 
@@ -106,8 +120,8 @@ def main():
             for key, value in locals().items():
                 print(key, " : ", asizeof.asizeof(value) / 1024*1024, " MB")
 
-            for key, value in globals().items():
-                print(key, " : ", asizeof.asizeof(value) / 1024*1024, " MB")
+            # for key, value in globals().items():
+            #     print(key, " : ", asizeof.asizeof(value) / 1024*1024, " MB")
 
         time.sleep(1)
 
