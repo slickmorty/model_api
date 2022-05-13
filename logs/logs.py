@@ -4,9 +4,9 @@ import coloredlogs
 GET_INITIAL_DATA = "Getting initial data from metatrader"
 CONVERT_TO_CSV = "Saving initial data on CSV"
 UPDATE_MODEL_INITIALLY = """
-\t********************      UPDATING MODEL WITH DATA SINCE LAST TIME        ********************
-\t********************              THIS COULD TAKE SOME TIME               ********************
-\t********************          DON'T TOUCH THE KEYBOARD PLZ <3             ********************"""
+********************      UPDATING MODEL WITH DATA SINCE LAST TIME        ********************
+********************              THIS COULD TAKE SOME TIME               ********************
+********************          DON'T TOUCH THE KEYBOARD PLZ <3             ********************"""
 FINISHED_UPDATING = "********Finished updating the model********"
 LOADING = "LOADING..........."
 PREDICTING = "Predicting"
@@ -18,9 +18,13 @@ DELETING_ALL_DATA = "********* Deleting all previous data in database **********
 ADDING_NEW_DATA = "********* ADDING NEW DATA IN DATABASE ***********"
 TRY_FAILED = "********* TRY FAILED *********"
 UPDATING_MODEL = """
-\t********************                  UPDATING_MODEL                      ********************
-\t********************              THIS COULD TAKE SOME TIME               ********************
-\t********************          DON'T TOUCH THE KEYBOARD PLZ <3             ********************"""
+********************                  UPDATING_MODEL                      ********************
+********************              THIS COULD TAKE SOME TIME               ********************
+********************          DON'T TOUCH THE KEYBOARD PLZ <3             ********************"""
+
+EXITING = """
+********************                        EXITING                       ********************
+********************                    HAVE A NICE DAY                   ********************"""
 
 
 def make_logs(logs):
