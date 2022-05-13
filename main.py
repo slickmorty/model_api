@@ -225,7 +225,7 @@ if __name__ == "__main__":
 
     except KeyboardInterrupt:
         for i in range(5):
-            print("Exiting in ", 5-i, "*"*5-i, end="\r")
+            print("Exiting in ", 5-i, end="\r")
             time.sleep(1)
         mylogs.exception(logs.EXITING)
         exit()
