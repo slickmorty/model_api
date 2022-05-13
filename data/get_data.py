@@ -7,7 +7,9 @@ from data.settings import data_settings
 from model.settings import model_settings
 from data import indicators
 from logs import logs
+
 from main import mylogs
+logs.make_logs(logs=mylogs)
 
 
 def get_initial_data(model_date: datetime = model_settings.model_date, symbol: str = data_settings.symbol) -> tuple[list, list]:
@@ -38,7 +40,7 @@ def get_initial_data(model_date: datetime = model_settings.model_date, symbol: s
                 symbol, mt5.TIMEFRAME_M5, model_date, data_settings.how_many_candles_before).tolist()
         except:
             mylogs.exception(logs.ERROR_RETRIEVING_DATA_FROM_META)
-            time.sleep(1)
+            time.sleep(5)
         else:
             break
 
@@ -65,7 +67,7 @@ def get_live_data(symbol: str = data_settings.symbol) -> list[tuple]:
                 symbol, mt5.TIMEFRAME_M5, 0, 1).tolist()
         except Exception:
             mylogs.exception(logs.ERROR_RETRIEVING_DATA_FROM_META)
-            time.sleep(1)
+            time.sleep(5)
         else:
             break
 
@@ -92,7 +94,7 @@ def get_prev_candle(symbol: str = data_settings.symbol) -> tuple:
                 symbol, mt5.TIMEFRAME_M5, convert_to_metatrader_timezone(datetime.now()), 2).tolist()[:][0]
         except Exception:
             mylogs.exception(logs.ERROR_RETRIEVING_DATA_FROM_META)
-            time.sleep(1)
+            time.sleep(5)
         else:
             break
     return prev_candle
