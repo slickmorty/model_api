@@ -20,15 +20,6 @@ mylogs = logging.getLogger(__name__)
 def main(send_to_database: bool = True):
 
     data_until_now, df, raw_df = get_and_save_initial_data()
-
-    # Delete all previous data in database
-    if send_to_database:
-        delete_all_data_in_database()
-
-    # Adding all new data in database(only some of the new ones)
-    if send_to_database:
-        add_all_new_data_in_database(df=df[-data_settings.window_size:])
-
     counter = len(data_until_now)
 
     # Check if the model needs to be updated initially
@@ -54,6 +45,12 @@ def main(send_to_database: bool = True):
 
     all_so_far = pd.concat([all_so_far, temp_df], ignore_index=True)
     all_so_far.to_csv(data_settings.all_data_so_far_path, index=False)
+
+    # Delete all previous data in database
+    # Adding all new data in database(only some of the new ones)
+    if send_to_database:
+        delete_all_data_in_database()
+        add_all_new_data_in_database(df=df[-data_settings.window_size:])
 
     while(True):
 
@@ -145,7 +142,7 @@ def delete_all_data_in_database() -> requests.Response:
     response = requests.Response()
     while response.status_code != requests.status_codes.codes["okay"]:
         try:
-            mylogs.info(logs.DELETING_ALL_DATA)
+            mylogs.warning(logs.DELETING_ALL_DATA)
             response = api_requests.delete_all()
             mylogs.info(response)
         except Exception as e:
@@ -229,5 +226,3 @@ if __name__ == "__main__":
             time.sleep(1)
         mylogs.exception(logs.EXITING)
         exit()
-    except Exception as e:
-        mylogs.exception(e)
