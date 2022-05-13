@@ -117,9 +117,9 @@ def main(send_to_database: bool = True):
             # Holy shit wtf is this
             model = load_model(model_settings.model_path)
 
-            for key, value in locals().items():
-                print(key, " : ", asizeof.asizeof(value) / 1024*1024, " MB")
-
+            # FOR MEMORY CHECK
+            # for key, value in locals().items():
+            #     print(key, " : ", asizeof.asizeof(value) / (1024*1024), " MB")
             # for key, value in globals().items():
             #     print(key, " : ", asizeof.asizeof(value) / 1024*1024, " MB")
 
@@ -145,9 +145,8 @@ def delete_all_data_in_database() -> requests.Response:
             mylogs.warning(logs.DELETING_ALL_DATA)
             response = api_requests.delete_all()
             mylogs.info(response)
-        except Exception as e:
+        except Exception:
             mylogs.critical(logs.TRY_FAILED)
-            print(e)
             time.sleep(5)
     return response
 
@@ -160,9 +159,8 @@ def add_all_new_data_in_database(df: pd.DataFrame) -> requests.Response:
             mylogs.warning(logs.ADDING_NEW_DATA)
             response = api_requests.insert_all(df=df[-256:])
             mylogs.info(response)
-        except Exception as e:
+        except Exception:
             mylogs.critical(logs.TRY_FAILED)
-            print(e)
             time.sleep(5)
     return response
 
@@ -174,9 +172,8 @@ def add_new_data_in_database(df: pd.DataFrame) -> requests.Response:
             mylogs.warning(logs.ADDING_NEW_DATA)
             response = api_requests.insert_one(df=df)
             mylogs.info(response)
-        except Exception as e:
+        except Exception:
             mylogs.critical(logs.TRY_FAILED)
-            print(e)
             time.sleep(5)
     return response
 
