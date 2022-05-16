@@ -72,15 +72,8 @@ def test():
                                 param_name="test_model_date")
 
             # Giga wierd memory management issue
-            # solved with this line :))))))))))))
+            # ssolved with this line :))))))))))))
             model = load_model(model_settings.test_model_path)
-
-            # List of objects in local and global scope
-            for key, value in locals().items():
-                print(key, " : ", asizeof.asizeof(value) / 1024*1024, " MB")
-
-            for key, value in globals().items():
-                print(key, " : ", asizeof.asizeof(value) / 1024*1024, " MB")
 
 
 #   SAVE DATA ON DISK

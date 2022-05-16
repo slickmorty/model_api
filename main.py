@@ -55,7 +55,7 @@ def main(send_to_database: bool = True):
     while(True):
 
         # Getting latest completed candle
-        prev_candle = get_new_candle()
+        prev_candle = get_new_candle(df)
 
         # Check if the candle is new
         if(raw_df.iloc[-1].DateTime != prev_candle[0]):
@@ -195,8 +195,10 @@ def get_and_save_initial_data() -> tuple[list, pd.DataFrame, pd.DataFrame]:
     return data_until_now, df, raw_df
 
 
-def get_new_candle() -> list:
-    mylogs.info(logs.GETTING_NEW_DATA)
+def get_new_candle(df: pd.DataFrame) -> list:
+    prediction = "Buy" if df.Prediction.iloc[-1] == 1 else "Sell"
+    mylogs.info(
+        f"{logs.GETTING_NEW_DATA}, Last Prediction: {prediction} at {df.DateTime.iloc[-1]}")
     # GET NEW CANDLE
     prev_candle = list(get_data.get_prev_candle())
 

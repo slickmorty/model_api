@@ -40,6 +40,9 @@ ERROR_RETRIEVING_DATA_FROM_META = """
 **********************************************************************************************
 """
 
+META_INITIALIZE_FAILED = """
+********************           METATRADED INITIALIZE FAILED              ********************"""
+
 
 def make_logs(logs):
 

@@ -13,33 +13,41 @@ logs.make_logs(logs=mylogs)
 
 
 def get_initial_data(model_date: datetime = model_settings.model_date, symbol: str = data_settings.symbol) -> tuple[list, list]:
-    """Getting initial data
-
-    Args:
-        model_date (str, optional): The date model was previously trained on. Defaults to model_settings.model_date.
-        symbol (str, optional): symbol e.g. SP500m. Defaults to data_settings.symbol.
-
-    Returns:
-        tuple[list, list]: A tuple containing list of data untill now and some data before model's date
-    """
 
     # Make model date's time compatible with metatradertimesone
     model_date = convert_to_metatrader_timezone(model_date)
 
+    now = convert_to_metatrader_timezone(datetime.now())
     if not mt5.initialize():
-        print("initialize() failed")
+        mylogs.exception(logs.META_INITIALIZE_FAILED)
+        mylogs.exception(mt5.last_error())
         mt5.shutdown()
 
-    now = convert_to_metatrader_timezone(datetime.now())
     while True:
         try:
             data_until_now = mt5.copy_rates_range(
-                symbol, mt5.TIMEFRAME_M5, model_date, now).tolist()
+                symbol, mt5.TIMEFRAME_M5, model_date, now)
 
             data_before_model_date = mt5.copy_rates_from(
-                symbol, mt5.TIMEFRAME_M5, model_date, data_settings.how_many_candles_before).tolist()
+                symbol, mt5.TIMEFRAME_M5, model_date, data_settings.how_many_candles_before)
+
+            if data_until_now is not None:
+                data_until_now = data_until_now.tolist()
+            else:
+                raise Exception("Unable to retrieve Data")
+
+            if data_before_model_date is not None:
+                data_before_model_date = data_before_model_date.tolist()
+            else:
+                raise Exception("Unable to retrieve Data")
+
         except:
             mylogs.exception(logs.ERROR_RETRIEVING_DATA_FROM_META)
+            mylogs.exception(mt5.last_error())
+            if not mt5.initialize():
+                mylogs.exception(logs.META_INITIALIZE_FAILED)
+                mylogs.exception(mt5.last_error())
+                mt5.shutdown()
             time.sleep(5)
         else:
             break
@@ -48,25 +56,25 @@ def get_initial_data(model_date: datetime = model_settings.model_date, symbol: s
 
 
 def get_live_data(symbol: str = data_settings.symbol) -> list[tuple]:
-    """Getting Live data
-
-    Args:
-        symbol (str, optional): symbol e.g. SP500m. Defaults to data_settings.symbol.
-
-    Returns:
-        list[tuple]: A list containing a tuple containing data.
-    """
-    if not mt5.initialize():
-        print("initialize() failed")
-        mt5.shutdown()
 
     # For when internet goes down
     while True:
         try:
             live_data = mt5.copy_rates_from_pos(
-                symbol, mt5.TIMEFRAME_M5, 0, 1).tolist()
+                symbol, mt5.TIMEFRAME_M5, 0, 1)
+
+            if live_data is not None:
+                live_data = live_data.tolist()
+            else:
+                raise Exception("Unable to retrieve Data")
+
         except Exception:
             mylogs.exception(logs.ERROR_RETRIEVING_DATA_FROM_META)
+            mylogs.exception(mt5.last_error())
+            if not mt5.initialize():
+                mylogs.exception(logs.META_INITIALIZE_FAILED)
+                mylogs.exception(mt5.last_error())
+                mt5.shutdown()
             time.sleep(5)
         else:
             break
@@ -75,25 +83,29 @@ def get_live_data(symbol: str = data_settings.symbol) -> list[tuple]:
 
 
 def get_prev_candle(symbol: str = data_settings.symbol) -> tuple:
-    """Getting previous candle
-
-    Args:
-        symbol (str, optional): symbol e.g. SP500m. Defaults to data_settings.symbol.
-
-    Returns:
-        list[tuple]: A tuple containing data.
-    """
-    if not mt5.initialize():
-        print("initialize() failed")
-        mt5.shutdown()
 
     # For when internet goes down
     while True:
         try:
-            prev_candle = mt5.copy_rates_from(
-                symbol, mt5.TIMEFRAME_M5, convert_to_metatrader_timezone(datetime.now()), 2).tolist()[:][0]
+            # Old
+            # prev_candle = mt5.copy_rates_from(
+            #     symbol, mt5.TIMEFRAME_M5, convert_to_metatrader_timezone(datetime.now()), 2)
+
+            prev_candle = mt5.copy_rates_from_pos(
+                symbol, mt5.TIMEFRAME_M5, 0, 2)
+
+            if prev_candle is not None:
+                prev_candle = prev_candle.tolist()[:][0]
+            else:
+                raise Exception("Unable to retrieve Data")
+
         except Exception:
+            mylogs.exception(mt5.last_error())
             mylogs.exception(logs.ERROR_RETRIEVING_DATA_FROM_META)
+            if not mt5.initialize():
+                mylogs.exception(logs.META_INITIALIZE_FAILED)
+                mylogs.exception(mt5.last_error())
+                mt5.shutdown()
             time.sleep(5)
         else:
             break
