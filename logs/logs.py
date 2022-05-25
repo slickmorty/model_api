@@ -1,22 +1,24 @@
 import logging
 import coloredlogs
 
+FINISHED_UPDATING = "Finished updating the model"
+LOADING = "LOADING"
+PREDICTING = "Predicting"
+GETTING_NEW_DATA = "Getting new data"
+NEW_CANDLE_DETECTED = "New Candle Detected"
+SAVING_CAREFULL = "Saving Data on disk, BE CAREFULL"
+WAITING_FOR_NEXT_CANDLE = "Waiting for next candle, At least 5 mins "
+DELETING_ALL_DATA = "Deleting all previous data in database "
+ADDING_NEW_DATA = "ADDING NEW DATA IN DATABASE "
+TRY_FAILED = "TRY FAILED"
 GET_INITIAL_DATA = "Getting initial data from metatrader"
 CONVERT_TO_CSV = "Saving initial data on CSV"
+
 UPDATE_MODEL_INITIALLY = """
 ********************      UPDATING MODEL WITH DATA SINCE LAST TIME        ********************
 ********************              THIS COULD TAKE SOME TIME               ********************
 ********************          DON'T TOUCH THE KEYBOARD PLZ <3             ********************"""
-FINISHED_UPDATING = "********Finished updating the model********"
-LOADING = "LOADING..........."
-PREDICTING = "Predicting"
-GETTING_NEW_DATA = "Getting new data"
-NEW_CANDLE_DETECTED = "New Candle Detected"
-SAVING_CAREFULL = "********* Saving Data on disk, BE CAREFULL ***********"
-WAITING_FOR_NEXT_CANDLE = "********* Waiting for next candle, At least 5 mins ***********"
-DELETING_ALL_DATA = "********* Deleting all previous data in database ***********"
-ADDING_NEW_DATA = "********* ADDING NEW DATA IN DATABASE ***********"
-TRY_FAILED = "********* TRY FAILED *********"
+
 UPDATING_MODEL = """
 ********************                  UPDATING_MODEL                      ********************
 ********************              THIS COULD TAKE SOME TIME               ********************
@@ -24,12 +26,10 @@ UPDATING_MODEL = """
 
 EXITING = """
 **********************************************************************************************
-**********************************************************************************************
 
 ********************                        EXITING                       ********************
 ********************                    HAVE A NICE DAY                   ********************
 
-**********************************************************************************************
 **********************************************************************************************
 """
 ERROR_RETRIEVING_DATA_FROM_META = """

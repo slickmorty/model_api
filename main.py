@@ -23,16 +23,16 @@ def main(send_to_database: bool = True):
     counter = len(data_until_now)
 
     # Check if the model needs to be updated initially
-    if(len(data_until_now) >= data_settings.future_window_size*2):
+    # if(len(data_until_now) >= data_settings.future_window_size*2):
 
-        counter = data_settings.future_window_size
+    #     counter = data_settings.future_window_size
 
-        mylogs.critical(logs.UPDATE_MODEL_INITIALLY)
-        model, data = model_update.update_model_with_initial_info(df)
-        mylogs.info(logs.FINISHED_UPDATING)
-    else:
-        mylogs.info(logs.LOADING)
-        model = load_model(model_settings.model_path)
+    #     mylogs.critical(logs.UPDATE_MODEL_INITIALLY)
+    #     model, data = model_update.update_model_with_initial_info(df)
+    #     mylogs.info(logs.FINISHED_UPDATING)
+    # else:
+    mylogs.info(logs.LOADING)
+    model = load_model(model_settings.model_path)
 
     mylogs.info(logs.PREDICTING)
     prediction = predict.predict(model, df, True)
@@ -110,12 +110,12 @@ def main(send_to_database: bool = True):
         # Check if the model needs to be updated
         if(counter >= data_settings.future_window_size * 2):
 
-            model = update_the_model(df, model)
+            # model = update_the_model(df, model)
             counter = 24
 
             # Very very wierd memory management issue is solved with this
             # Holy shit wtf is this
-            model = load_model(model_settings.model_path)
+            # model = load_model(model_settings.model_path)
 
             # FOR MEMORY CHECK
             # for key, value in locals().items():
@@ -196,7 +196,7 @@ def get_and_save_initial_data() -> tuple[list, pd.DataFrame, pd.DataFrame]:
 
 
 def get_new_candle(df: pd.DataFrame) -> list:
-    prediction = "Buy" if df.Prediction.iloc[-1] == 1 else "Sell"
+    prediction = "\'Buy\'" if df.Prediction.iloc[-1] == 1 else "\'Sell\'"
     mylogs.info(
         f"{logs.GETTING_NEW_DATA}, Last Prediction: {prediction} at {df.DateTime.iloc[-1]}")
     # GET NEW CANDLE
