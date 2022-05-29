@@ -224,4 +224,4 @@ if __name__ == "__main__":
             print("Exiting in ", 5-i, end="\r")
             time.sleep(1)
         mylogs.exception(logs.EXITING)
-        exit()
+        quit()
