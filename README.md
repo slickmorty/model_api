@@ -1,4 +1,4 @@
-## For algotrading with metatrader 5
+## Trade helper data server
 
 - Every 5 minuts
   - Get the data
@@ -11,7 +11,7 @@
       - Add the last row to all the data csv
     - Feed data to the model
     - Get the Prediction
-    - if the prediction is True, Do it in mt5
-
+    - Send the prediction to a remote database
 each of these should have loggings
 
+# The predictions will be shown in the users device
